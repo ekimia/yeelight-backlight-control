@@ -27,6 +27,6 @@ Numerous ways, but ill explain how I use it with Google Assistant:
 ## But why is this code so bad?
 Because im hoping Yeelight realizes that having full control of both the primary and background lights is an enormous draw to their products, and that it's clearly doable.
 
-If this does turn into a well written piece of open source library like the [Yeelight Python Library](https://yeelight.readthedocs.io/en/latest/) I would be severely disappointed.
+If this does turn into a well written piece of open source software like the [Yeelight Python Library](https://yeelight.readthedocs.io/en/latest/) I will be severely disappointed.
 
 And Yeelight - if you're reading this - feel free to add an issue to this repo so I can help you do it!
