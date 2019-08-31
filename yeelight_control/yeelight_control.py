@@ -16,11 +16,11 @@ from typing import (
     Optional,
 )
 
-BULB_IPS = [
-    '192.168.7.249',
-    '192.168.7.250',
-    '192.168.7.251',
-    '192.168.7.252',
+BULBS = [
+    Bulb('192.168.7.249'),
+    Bulb('192.168.7.250'),
+    Bulb('192.168.7.251'),
+    Bulb('192.168.7.252'),
 ]
 
 
@@ -29,10 +29,7 @@ bp = Blueprint('yeelight_control', __name__, url_prefix='/yeelight-control')
 
 @bp.route('/turn-on', methods=['POST'])
 def turn_on():
-    content = request.get_json(silent=True)
-    print(request.data)
     _send_command_to_all_bulbs('bg_set_power', params=['on'])
-
     body = json.loads(request.data.decode('utf-8'))
     color = body.get('color').lower()
 
@@ -49,17 +46,20 @@ def turn_on():
         rbg_value = hex_to_rbg_string('ff18f1')
     elif color == 'light blue':
         rbg_value = hex_to_rbg_string('9bcaff')
+    elif color == 'magenta':
+        rbg_value = hex_to_rbg_string('ba4ef4')
     else:
-        rbg_value = hex_to_rbg_string(color.lower())
-
-    for ip in BULB_IPS:
-        bulb = Bulb(ip)
-        print(bulb)
         try:
-            bulb.turn_on()
-            bulb.send_command('bg_set_rgb', [rgb_to_yeelight(*rbg_value)])
-        except Exception as e:
-            print(f'nope {e}')
+            rbg_value = hex_to_rbg_string(color)
+        except Exception:
+            logging.error(f'error processing hex {color}')
+
+    if rbg_value:
+        for bulb in BULBS:
+            try:
+                bulb.send_command('bg_set_rgb', [rgb_to_yeelight(*rbg_value)])
+            except Exception as e:
+                print(f'nope {e}')
 
     return jsonify()
 
@@ -72,11 +72,8 @@ def turn_off():
 
 
 def _send_command_to_all_bulbs(command: str, params: Optional[List[Any]] = None):
-    for ip in BULB_IPS:
-        bulb = Bulb(ip)
-        print(bulb)
+    for bulb in BULBS:
         try:
-            bulb.turn_on()
             bulb.send_command(command, params)
         except Exception as e:
             print(f'nope {e}')
