@@ -48,18 +48,14 @@ def turn_on():
         rbg_value = hex_to_rbg_string('9bcaff')
     elif color == 'magenta':
         rbg_value = hex_to_rbg_string('ba4ef4')
-    else:
+    elif color is not None:
         try:
             rbg_value = hex_to_rbg_string(color)
         except Exception:
             logging.error(f'error processing hex {color}')
 
     if rbg_value:
-        for bulb in BULBS:
-            try:
-                bulb.send_command('bg_set_rgb', [rgb_to_yeelight(*rbg_value)])
-            except Exception as e:
-                print(f'nope {e}')
+        _send_command_to_all_bulbs('bg_set_rgb', [rgb_to_yeelight(*rbg_value)])
 
     return jsonify()
 
